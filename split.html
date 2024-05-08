@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Split Numbers</title>
+    <!-- Bootstrap CDN for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Basic styling */
+        body {
+            margin: 20px;
+        }
+        /* Flex container for spacing buttons */
+        .button-container {
+            display: flex;
+            justify-content: space-between; /* Space between buttons */
+        }
+       
+        .table-bordered td, .table-bordered th {
+    border: 1px solid #dee2e6;
+    width: 80%;
+}
+       
+    </style>
+  
+</head>
+<body>
+    <div class="container">
+        <!-- Textarea to input numbers -->
+        <h2>Enter Numbers with Space:</h2>
+        <textarea id="numbersTextArea" class="form-control" rows="5" cols="40"></textarea><br>
+
+        <!-- Flex container with buttons -->
+        <div class="button-container">
+            <!-- Button to split and print -->
+            <button onclick="splitAndPrint()" class="btn btn-primary">Split and Print</button>
+        </div>
+
+        <!-- Table to display split numbers -->
+        <table class="table table-bordered mt-4">
+            <tbody id="outputTable"></tbody>
+        </table>
+    </div>
+    <script>
+        function splitAndPrint() {
+            const textarea = document.getElementById('numbersTextArea');
+            let numbers = textarea.value.split(" "); // split by spaces
+            numbers = numbers.filter(number => number.trim() !== ""); // remove empty strings
+
+            const outputTable = document.getElementById('outputTable');
+            outputTable.innerHTML = ""; // clear existing content
+
+            // Add numbers to the table
+            numbers.forEach((number, index) => {
+                const row = document.createElement('tr');
+                const numberCell = document.createElement('td');
+                numberCell.textContent = number;
+                row.appendChild(numberCell);
+
+                // Add static HTML for Edit and Delete buttons
+                const actionsCell = document.createElement('td');
+                actionsCell.innerHTML = `
+                    <button class="btn btn-warning edit-btn edit" data-index="${index}">Edit</button>
+                    <button class="btn btn-danger delete-btn delete" data-index="${index}">Delete</button>
+                `;
+                row.appendChild(actionsCell);
+
+                outputTable.appendChild(row);
+            });
+
+            attachEventListeners(); // Attach listeners after table is built
+        }
+
+        function attachEventListeners() {
+            // Event listener for Edit buttons
+            const editButtons = document.getElementsByClassName('edit-btn');
+            for (let button of editButtons) {
+                button.onclick = function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    editNumber(index);
+                };
+            }
+
+            // Event listener for Delete buttons
+            const deleteButtons = document.getElementsByClassName('delete-btn');
+            for (let button of deleteButtons) {
+                button.onclick = function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deleteNumber(index);
+                };
+            }
+        }
+
+        function editNumber(index) {
+            const textarea = document.getElementById('numbersTextArea');
+            let numbers = textarea.value.split(" "); // split by spaces
+            const newNumber = prompt("Enter new number:", numbers[index]);
+            if (newNumber !== null) {
+                numbers[index] = newNumber;
+                textarea.value = numbers.join(" "); // reassemble the numbers
+                splitAndPrint(); // refresh the table
+            }
+        }
+
+        function deleteNumber(index) {
+            const textarea = document.getElementById('numbersTextArea');
+            let numbers = textarea.value.split(" "); // split by spaces
+            numbers.splice(index, 1); // remove the specified index
+            textarea.value = numbers.join(" "); // reassemble the numbers
+            splitAndPrint(); // refresh the table
+        }
+    </script>
+</body>
+</html>
