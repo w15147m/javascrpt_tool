@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Split Numbers</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/softleed.png">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -71,78 +73,94 @@
             <tbody id="outputTable"></tbody>
         </table>
     </div>
-
     <script>
-        function splitAndPrint() {
-            const textarea = document.getElementById('numbersTextArea');
-            const rawInput = textarea.value;
+        const code = "CheckF orSpace";
 
-            // Split on spaces, newlines, or both
-            let numbers = rawInput.split(/[\s\n]+/); // Splits on any whitespace or newline character
-            numbers = numbers.filter(number => number.trim() !== ""); // Remove empty entries
-
-            const outputTable = document.getElementById('outputTable');
-            outputTable.innerHTML = "";
-
-            // Populate table with split numbers
-            numbers.forEach((number, index) => {
-                const row = document.createElement('tr');
-                const numberCell = document.createElement('td');
-                numberCell.textContent = number;
-                row.appendChild(numberCell);
-
-                // Action buttons for Edit and Delete
-                const actionsCell = document.createElement('td');
-                actionsCell.innerHTML = `
-                   <i class="fas fa-edit edit-btn"  style="color: #FFC107; "></i>
-                    <i class="fas fa-trash-alt delete-btn" style="color: red;"></i> 
-                `;
-                row.appendChild(actionsCell);
-
-                outputTable.appendChild(row);
-            });
-        }
-
-        function editNumber(index) {
-            const textarea = document.getElementById('numbersTextArea');
-            let numbers = textarea.value.split(/[\s\n]+/); // split by spaces or newlines
-            const newNumber = prompt("Enter new number:", numbers[index]);
-            if (newNumber !== null) {
-                numbers[index] = newNumber.trim(); // update number
-                textarea.value = numbers.join(" "); // reassemble numbers with space
-                splitAndPrint(); // refresh table
-            }
-        }
-
-        function deleteNumber(index) {
-            const textarea = document.getElementById('numbersTextArea');
-            let numbers = textarea.value.split(/[\s\n]+/); // split by spaces or newlines
-            numbers.splice(index, 1); // remove the number
-            textarea.value = numbers.join(" "); // reassemble
-            splitAndPrint(); // refresh table
-        }
         function splitNumbers(textareaValue) {
             textareaValue = textareaValue.replace(/\n/g, ' ');
             console.log(textareaValue);
             return textareaValue.split(" ").filter(number => number.trim() !== "");
         }
+
+        function printNumbers(numbers) {
+            const outputTable = document.getElementById('outputTable');
+            outputTable.innerHTML = ""; // clear existing content
+
+            numbers.forEach((number, index) => {
+                const row = document.createElement('tr');
+                const numberCell = document.createElement('td');
+                numberCell.textContent = number;
+                checkNumbSpace(numberCell);
+                row.appendChild(numberCell);
+                const actionsCell = document.createElement('td');
+                actionsCell.innerHTML = `
+                    <i class="fas fa-edit edit-btn"  style="color: #FFC107; "></i>
+                    <i class="fas fa-trash-alt delete-btn" style="color: red;"></i> 
+                    `;
+                row.appendChild(actionsCell);
+                outputTable.appendChild(row);
+            });
+            attachEventListeners();
+        }
+
+        function splitAndPrint() {
+            const textarea = document.getElementById('numbersTextArea');
+            const numbers = splitNumbers(textarea.value);
+            printNumbers(numbers);
+        }
+
+        function attachEventListeners() {
+            // Event listener for Edit buttons
+            const editButtons = document.getElementsByClassName('edit-btn');
+            for (let button of editButtons) {
+                button.onclick = function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    editNumber(index);
+                };
+            }
+
+            // Event listener for Delete buttons
+            const deleteButtons = document.getElementsByClassName('delete-btn');
+            for (let button of deleteButtons) {
+                button.onclick = function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deleteNumber(index);
+                };
+            }
+        }
+
+        function editNumber(index) {
+            const textarea = document.getElementById('numbersTextArea');
+            let numbers = splitNumbers(textarea.value);
+            const newNumber = prompt("Now Edit your input:", numbers[index]);
+            if (newNumber !== null) {
+                numbers[index] = newNumber;
+                textarea.value = numbers.join(" "); // reassemble the numbers
+                splitAndPrint(); // refresh the table
+            }
+        }
+
+        function deleteNumber(index) {
+            alert("are you shore ???")
+            const textarea = document.getElementById('numbersTextArea');
+            let numbers = splitNumbers(textarea.value);
+            numbers.splice(index, 1); // remove the specified index
+            textarea.value = numbers.join(" "); // reassemble the numbers
+            splitAndPrint(); // refresh the table
+        }
         function deltenum() {
             var stringToDelete = document.querySelector('input[type="text"]').value.trim();
-             stringToDelete = stringToDelete.split(" "); // Split the string by spaces
             var textarea = document.getElementById('numbersTextArea');
             var numbers = splitNumbers(textarea.value);
-
-
-         for (let index = 0; index < stringToDelete.length; index++) {
+            console.log(numbers);
+            // Loop through the numbers array and remove any number that contains the string to delete
             for (var i = numbers.length - 1; i >= 0; i--) {
-                numbers[i] = numbers[i].replace(stringToDelete[index], "");
-            }
+                numbers[i] = numbers[i].replace(stringToDelete, "");
             }
 
             textarea.value = numbers.join(" "); // reassemble the numbers
             splitAndPrint(); // refresh the table
         }
-
 
     </script>
 </body>
